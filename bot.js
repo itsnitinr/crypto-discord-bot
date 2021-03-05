@@ -85,4 +85,15 @@ bot.on('message', async (message) => {
       return message.reply('There was an error. Please try again later.');
     }
   }
+
+  // Reply to !help
+  if (message.content.startsWith('!help')) {
+    return message.reply(
+      `I support 4 commands:\n
+      !ping - To check if I am working\n
+      !price <coin_name> <compare_currency> - To get the price of a coin with respect to another coin or currency\n
+      !news - To get the latest news article related to crypto\n
+      !help - For checking out what commands are available`
+    );
+  }
 });
