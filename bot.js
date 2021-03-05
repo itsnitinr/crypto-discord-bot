@@ -1,6 +1,7 @@
 // Require dependencies
 const { Client } = require('discord.js');
 const dotenv = require('dotenv');
+const axios = require('axios');
 
 // Load environment variables
 dotenv.config();
@@ -24,5 +25,37 @@ bot.on('message', async (message) => {
   // Reply to !ping
   if (message.content.startsWith('!ping')) {
     return message.reply('I am working!');
+  }
+
+  // Reply to !price
+  if (message.content.startsWith('!price')) {
+    // Get the params
+    const [command, ...args] = message.content.split(' ');
+
+    // Check if there are two arguments present
+    if (args.length !== 2) {
+      return message.reply(
+        'You must provide the crypto and the currency to compare with!'
+      );
+    } else {
+      const [coin, vsCurrency] = args;
+      try {
+        // Get crypto price from coingecko API
+        const { data } = await axios.get(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=${vsCurrency}`
+        );
+
+        // Check if data exists
+        if (!data[coin][vsCurrency]) throw Error();
+
+        return message.reply(
+          `The current price of 1 ${coin} = ${data[coin][vsCurrency]} ${vsCurrency}`
+        );
+      } catch (err) {
+        return message.reply(
+          'Please check your inputs. For example: !price bitcoin usd'
+        );
+      }
+    }
   }
 });
